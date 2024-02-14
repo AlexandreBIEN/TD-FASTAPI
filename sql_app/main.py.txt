@@ -1,0 +1,36 @@
+from dataclasses import dataclass
+from typing import Union
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+from datetime import datetime
+
+@dataclass
+class Article(BaseModel):
+    title: str
+    content: str
+    creation_date: datetime
+
+app = FastAPI()
+
+articles = []
+
+@app.get("/")
+async def read_articles():
+    return articles
+
+@app.get("/article/{article_id}")
+async def read_article(article_id: int):
+    return articles[article_id]
+
+@app.post("/article/post")
+async def create_article(article: Article):
+    articles.append(article)
+
+@app.put("/article/put/{article_id}")
+async def update_article(article_id: int, article: Article):
+    articles[article_id] = article
+
+@app.delete("/article/delete/{article_id}")
+async def delete_article(article_id: int):
+    del(articles[article_id])
